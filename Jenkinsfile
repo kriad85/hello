@@ -12,4 +12,9 @@ pipeline {
             }
         }
     }
+	post {
+        always {
+            archiveArtifacts artifacts: 'target/hello.jar.jar', onlyIfSuccessful: true
+        }
+    }
 }
