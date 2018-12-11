@@ -1,4 +1,8 @@
 pipeline {
+    environment {
+       registry = "localhost:5000/hello"
+       dockerImage = ''
+    }
     agent {
         docker {
             image 'maven:3-alpine' 
@@ -11,6 +15,22 @@ pipeline {
                 sh 'mvn install' 
             }
         }
+    }
+	stage(‘Building image’) {
+      steps{
+        script {
+          dockerImage = docker.build registry + “:$BUILD_NUMBER”
+        }
+      }
+    }
+	stage(‘Deploy Image’) {
+      steps{
+        script {
+          docker.withRegistry( '', '' ) {
+            dockerImage.push()
+          }
+        }
+      }
     }
 	post {
         always {
