@@ -15,23 +15,23 @@ pipeline {
                 sh 'mvn install' 
             }
         }
-    }
-	stage('Building image') {
-      steps{
-        script {
-          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+	    stage('Building image') {
+            steps{
+              script {
+                 dockerImage = docker.build registry + ":$BUILD_NUMBER"
+              }
+		    }
         }
-      }
-    }
-	stage('Deploy Image') {
-      steps{
-        script {
-          docker.withRegistry( '', '' ) {
-            dockerImage.push()
-          }
-        }
-      }
-    }
+	   stage('Deploy Image') {
+            steps{
+              script {
+                 docker.withRegistry( '', '' ) {
+                    dockerImage.push()
+                 }
+             }
+            }
+       }
+	}   
 	post {
         always {
             archiveArtifacts artifacts: 'target/hello.jar.jar', onlyIfSuccessful: true
